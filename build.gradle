@@ -18,13 +18,14 @@
 buildscript {
   repositories {
     maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
   }
 
   dependencies {
     classpath "gradle.plugin.org.nosphere.apache:creadur-rat-gradle:0.2.0"
     classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.0.1'
-    classpath "com.diffplug.gradle.spotless:spotless:1.3.3"
+    classpath "com.diffplug.gradle.spotless:spotless:2.3.0-SNAPSHOT"
   }
 }
 
@@ -94,7 +95,7 @@ subprojects {
       //importOrder ['java', 'javax', 'org', 'com', 'com.diffplug', ''] // An array of package names
       //importOrderFile 'spotless.importorder'                          // An import ordering file, exported from Eclipse
 
-      eclipseFormatFile "${rootProject.projectDir}/etc/eclipse-java-google-style.xml"
+      googleJavaFormat()
     }
   }
 }
